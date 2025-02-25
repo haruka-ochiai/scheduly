@@ -5,7 +5,19 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-COPY ./php.ini /usr/local/etc/php/php.ini
-COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+COPY laravel /var/www
 WORKDIR /var/www
+RUN composer install --no-dev --optimize-autoloader
+
+RUN composer require laravel/ui
+RUN php artisan ui bootstrap --auth
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+
+RUN npm run build
