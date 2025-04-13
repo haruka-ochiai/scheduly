@@ -13,9 +13,6 @@ COPY laravel /var/www
 WORKDIR /var/www
 RUN composer install --no-dev --optimize-autoloader
 
-RUN composer require laravel/ui
-RUN php artisan ui bootstrap --auth
-
 COPY package.json package-lock.json ./
 
 RUN npm install
